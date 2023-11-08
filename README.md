@@ -8,7 +8,8 @@
 
     npm install
 
-  Make sure you have a SOCKS5 proxy server running locally on 127.0.0.1:1080, in open proxy mode.
+  Make sure you have a SOCKS5 proxy server running locally on 127.0.0.1:1080, in open proxy mode. Refer to the docs if you haven'y done this before https://nymtech.net/docs/clients/socks5-client.html 
+  
   Once you have that running, do:
     
     npm start
