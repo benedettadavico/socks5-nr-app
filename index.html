@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Socks5 App</title>
+</head>
+
+<body>
+  <button id="fetch-button">Fetch Random Fact</button>
+  <div id="data-container"></div>
+  <pre id="response"></pre>
+  <div id="loading-indicator" style="display: none;">Loading...</div>
+  <script>
+    const SocksProxyAgent = require('socks-proxy-agent');
+
+    // create new socks5 proxy agent
+    window.electron = {
+      makeSocksHttpRequest: async () => {
+        new SocksProxyAgent('socks5://127.0.0.1:1080');
+      },
+    };
+
+    const fetchButton = document.getElementById('fetch-button');
+    const responseElement = document.getElementById('response');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    // make an http request to random fact endpoint through socks5
+    fetchButton.addEventListener('click', async () => {
+      fetchButton.disabled = true;
+      loadingIndicator.style.display = 'block';
+
+      try {
+        setTimeout(async () => {
+          const response = await window.electron.makeSocksHttpRequest('https://uselessfacts.jsph.pl/random.json?language=en');
+          responseElement.textContent = JSON.stringify(response, null, 2);
+        });
+      } catch (error) {
+        if (error.message.includes('ECONNREFUSED')) {
+          responseElement.textContent = 'Error: SOCKS5 proxy is offline';
+        }
+      }
+    });
+
+    // handle the response 
+    const { ipcRenderer } = require('electron');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const fetchButton = document.getElementById('fetch-button');
+      const dataContainer = document.getElementById('data-container');
+
+      fetchButton.addEventListener('click', async () => {
+        ipcRenderer.send('fetch-data');
+
+        // displays the response on the app
+        ipcRenderer.on('fetch-data-response', (event, response) => {
+          if (response.error) {
+            dataContainer.innerText = `Error: ${response.error}`;
+          } else {
+            dataContainer.innerText = JSON.stringify(response, null, 2);
+            fetchButton.disabled = false;
+            loadingIndicator.style.display = 'none';
+          }
+        });
+      });
+    });
+
+  </script>
+</body>
+
+</html>
