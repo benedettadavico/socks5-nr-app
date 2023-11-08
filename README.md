@@ -1,7 +1,7 @@
 # A simple Electron app that:
 
-  - Connects to a SOCKS5 proxy server.
-  - Establishes WebSocket connections.
+  - Connects to a socks5 proxy server.
+  - Establishes WebSocket connection.
   - Calls an external API to fetch random facts.
 
 # How to use it:
